@@ -1,95 +1,44 @@
-# ERD — song logging & rating platform
+# ERD — [project name TBD]
+
+Draw the entity-relationship diagram as a Mermaid `erDiagram`. Mermaid
+renders automatically in GitHub, GitLab, and VS Code's Markdown preview.
 
 ```mermaid
 erDiagram
-  ARTIST ||--o{ ALBUM : releases
-  ALBUM ||--o{ SONG : contains
-  SONG ||--o{ SONG_GENRE : tagged_as
-  GENRE ||--o{ SONG_GENRE : categorizes
-  USER ||--o{ LOG : writes
-  SONG ||--o{ LOG : logged_as
-  USER ||--o{ LIST : creates
-  LIST ||--o{ LIST_ITEM : contains
-  SONG ||--o{ LIST_ITEM : included_in
-  USER ||--o{ FOLLOW : follower
-  USER ||--o{ FOLLOW : followee
+  ENTITY_ONE ||--o{ ENTITY_THREE : relationship_label
+  ENTITY_ONE }o--o{ ENTITY_TWO : many_to_many_label
 
-  USER {
-    int user_id PK
-    string username
-    string email
-    string password_hash
-    datetime joined_at
+  ENTITY_ONE {
+    int entity_one_id PK
   }
-  ARTIST {
-    int artist_id PK
-    string name
+  ENTITY_TWO {
+    int entity_two_id PK
   }
-  ALBUM {
-    int album_id PK
-    string title
-    date release_date
-    int artist_id FK
-  }
-  SONG {
-    int song_id PK
-    string title
-    int duration_sec
-    int album_id FK
-  }
-  GENRE {
-    int genre_id PK
-    string name
-  }
-  SONG_GENRE {
-    int song_id PK
-    int genre_id PK
-  }
-  LOG {
-    int log_id PK
-    int user_id FK
-    int song_id FK
-    int rating
-    string review_text
-    datetime logged_at
-  }
-  LIST {
-    int list_id PK
-    int user_id FK
-    string title
-    datetime created_at
-  }
-  LIST_ITEM {
-    int list_id PK
-    int song_id PK
-    int position
-  }
-  FOLLOW {
-    int follower_id PK
-    int followee_id PK
+  ENTITY_THREE {
+    int entity_three_id PK
+    int entity_one_id FK
   }
 ```
 
+**Cardinality symbols** (put the right one on each end of a relationship):
+- `||` — exactly one
+- `o|` — zero or one
+- `}o` / `o{` — zero or many
+- `}|` / `|{` — one or many
+
+For each entity box, list every attribute and mark:
+- `PK` — primary key (uniquely identifies the row)
+- `FK` — foreign key (references another entity's PK)
+
 ## Design notes
 
-- **`LOG` is both a diary entry and a review.** A user can log the same
-  song multiple times (`log_id` is its own surrogate key, not a composite
-  of user+song), mirroring Letterboxd's "rewatch" diary entries. `rating`
-  and `review_text` are both optional on top of the required listen event.
-- **`SONG_GENRE` and `LIST_ITEM` are junction tables** resolving the two
-  many-to-many relationships in the schema (song↔genre, list↔song).
-  `LIST_ITEM.position` supports ranked lists (e.g. "top 10 songs of 2025").
-- **`FOLLOW` is self-referencing on `USER`** (`follower_id`, `followee_id`)
-  to model the social graph.
-- Artist name and album title are *not* duplicated onto `SONG` — they're
-  reached via `ALBUM.artist_id` and `SONG.album_id` respectively, which is
-  what keeps the schema from having a transitive dependency (see
-  `normalization.md`).
+Explain key decisions here — e.g.:
+- Why a relationship is one-to-many vs. many-to-many
+- Any surrogate keys used instead of natural keys, and why
+- Anything non-obvious about the model that isn't clear from the diagram
+  alone
 
-## Future work (next sprint — Advanced Relational Design)
+## Future work (next sprint)
 
-- `LIKE` (user likes a `LOG`) and `COMMENT` (user comments on a `LOG`) —
-  both straightforward junction/child tables on `LOG`.
-- Indexing strategy for common queries (e.g. a user's diary feed, a song's
-  average rating).
-- Views for aggregate stats (e.g. average rating per song).
+What's planned for the next sprint (Advanced Relational Design) — new
+tables, relationships not yet modeled, indexing strategy, etc.

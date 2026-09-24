@@ -1,84 +1,59 @@
--- Song logging & rating platform — schema DDL
+-- [Project name TBD] — schema DDL
 -- See docs/erd.md and docs/normalization.md for design rationale.
+--
+-- Fill in the blanks below once the team has drawn the ERD and worked
+-- out the normalization argument. The structure/pattern is sketched out;
+-- the actual entities, columns, and relationships are TBD.
 
-CREATE DATABASE IF NOT EXISTS song_log;
-USE song_log;
+CREATE DATABASE IF NOT EXISTS TBD;
+USE TBD;
 
-CREATE TABLE USER (
-    user_id       INT AUTO_INCREMENT PRIMARY KEY,
-    username      VARCHAR(50)  NOT NULL UNIQUE,
-    email         VARCHAR(255) NOT NULL UNIQUE,
-    password_hash VARCHAR(255) NOT NULL,
-    joined_at     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP
+-- ── Core entity tables ──────────────────────────────────────────────
+-- One CREATE TABLE per "thing" the system tracks (an entity from the ERD).
+-- Every table needs a primary key (PK) — usually a surrogate
+-- AUTO_INCREMENT id, unless there's a natural key.
+
+CREATE TABLE ENTITY_ONE (
+    entity_one_id INT AUTO_INCREMENT PRIMARY KEY
+    -- TODO: columns
 );
 
-CREATE TABLE ARTIST (
-    artist_id INT AUTO_INCREMENT PRIMARY KEY,
-    name      VARCHAR(200) NOT NULL
+CREATE TABLE ENTITY_TWO (
+    entity_two_id INT AUTO_INCREMENT PRIMARY KEY
+    -- TODO: columns
 );
 
-CREATE TABLE ALBUM (
-    album_id     INT AUTO_INCREMENT PRIMARY KEY,
-    title        VARCHAR(200) NOT NULL,
-    release_date DATE,
-    artist_id    INT NOT NULL,
-    FOREIGN KEY (artist_id) REFERENCES ARTIST(artist_id)
+-- ── One-to-many relationship (FK on the "many" side) ────────────────
+-- e.g. if many ENTITY_TWO rows each belong to exactly one ENTITY_ONE:
+
+CREATE TABLE ENTITY_THREE (
+    entity_three_id INT AUTO_INCREMENT PRIMARY KEY,
+    -- TODO: columns
+    entity_one_id INT NOT NULL,
+    FOREIGN KEY (entity_one_id) REFERENCES ENTITY_ONE(entity_one_id)
 );
 
-CREATE TABLE SONG (
-    song_id      INT AUTO_INCREMENT PRIMARY KEY,
-    title        VARCHAR(200) NOT NULL,
-    duration_sec INT NOT NULL,
-    album_id     INT NOT NULL,
-    FOREIGN KEY (album_id) REFERENCES ALBUM(album_id)
+-- ── Many-to-many relationship (junction/bridge table) ───────────────
+-- Composite PK of both foreign keys; no surrogate key needed unless the
+-- relationship itself has attributes worth tracking with its own identity.
+
+CREATE TABLE ENTITY_ONE_ENTITY_TWO (
+    entity_one_id INT NOT NULL,
+    entity_two_id INT NOT NULL,
+    -- TODO: any attributes of the relationship itself (e.g. position, role)
+    PRIMARY KEY (entity_one_id, entity_two_id),
+    FOREIGN KEY (entity_one_id) REFERENCES ENTITY_ONE(entity_one_id),
+    FOREIGN KEY (entity_two_id) REFERENCES ENTITY_TWO(entity_two_id)
 );
 
-CREATE TABLE GENRE (
-    genre_id INT AUTO_INCREMENT PRIMARY KEY,
-    name     VARCHAR(100) NOT NULL UNIQUE
-);
+-- ── Self-referencing relationship (e.g. users following users) ──────
+-- Only needed if an entity relates to another row of its own table.
 
-CREATE TABLE SONG_GENRE (
-    song_id  INT NOT NULL,
-    genre_id INT NOT NULL,
-    PRIMARY KEY (song_id, genre_id),
-    FOREIGN KEY (song_id) REFERENCES SONG(song_id),
-    FOREIGN KEY (genre_id) REFERENCES GENRE(genre_id)
-);
-
-CREATE TABLE LOG (
-    log_id      INT AUTO_INCREMENT PRIMARY KEY,
-    user_id     INT NOT NULL,
-    song_id     INT NOT NULL,
-    rating      TINYINT CHECK (rating BETWEEN 1 AND 5),
-    review_text TEXT,
-    logged_at   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES USER(user_id),
-    FOREIGN KEY (song_id) REFERENCES SONG(song_id)
-);
-
-CREATE TABLE LIST (
-    list_id    INT AUTO_INCREMENT PRIMARY KEY,
-    user_id    INT NOT NULL,
-    title      VARCHAR(200) NOT NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES USER(user_id)
-);
-
-CREATE TABLE LIST_ITEM (
-    list_id  INT NOT NULL,
-    song_id  INT NOT NULL,
-    position INT NOT NULL,
-    PRIMARY KEY (list_id, song_id),
-    FOREIGN KEY (list_id) REFERENCES LIST(list_id),
-    FOREIGN KEY (song_id) REFERENCES SONG(song_id)
-);
-
-CREATE TABLE FOLLOW (
-    follower_id INT NOT NULL,
-    followee_id INT NOT NULL,
-    PRIMARY KEY (follower_id, followee_id),
-    FOREIGN KEY (follower_id) REFERENCES USER(user_id),
-    FOREIGN KEY (followee_id) REFERENCES USER(user_id),
-    CHECK (follower_id <> followee_id)
-);
+-- CREATE TABLE ENTITY_ONE_RELATION (
+--     from_id INT NOT NULL,
+--     to_id   INT NOT NULL,
+--     PRIMARY KEY (from_id, to_id),
+--     FOREIGN KEY (from_id) REFERENCES ENTITY_ONE(entity_one_id),
+--     FOREIGN KEY (to_id)   REFERENCES ENTITY_ONE(entity_one_id),
+--     CHECK (from_id <> to_id)
+-- );

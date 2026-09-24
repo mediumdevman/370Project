@@ -1,8 +1,7 @@
-# [Project name TBD] — a song logging & rating platform
+# [Project name TBD]
 
-CSC 370 course project — an information system backed by a MySQL database,
-inspired by Letterboxd but for songs: users log listens, rate and review
-tracks, build ranked lists, and follow each other.
+CSC 370 course project — an information system backed by a MySQL database.
+Topic and design TBD by the team.
 
 ## Team
 
@@ -26,13 +25,12 @@ tracks, build ranked lists, and follow each other.
 - Build a complete ERD and implement it as a normalized (BCNF) relational
   database with SQL DDL
 
-**Evidence:** see `docs/erd.md`, `docs/normalization.md`, and `db/schema.sql`.
+**Status:** design in progress — see `docs/erd.md`, `docs/normalization.md`,
+and `db/schema.sql` (currently outlines/templates for the team to fill in).
 
 ### Next sprint
 
-Planned scope: Advanced Relational Design. See `docs/erd.md` for the
-"future work" section outlining what's planned (likes/comments on logs,
-indexing strategy, etc.).
+Planned scope: Advanced Relational Design.
 
 ## Setup
 
