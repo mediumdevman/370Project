@@ -1,23 +1,23 @@
-# [Project name TBD]
+# Project Kickoff 
 
-CSC 370 course project — an information system backed by a MySQL database.
-Topic and design TBD by the team.
+Hello, 
 
-## Team
+This is a file to document the development of our CSC370 Database Porject. This is the entry for Project Kick-Off/Sprint 0. It contains the rational for our design choices and serves a supplementary document to our video. It is also a place for us to take notes
 
-- Group 8
-- Member names / GitHub usernames: TBD
+## Team | Group 8 
+
+- Zach Zhao, Maren Dunn, Jackson MacNeil
 
 ## Repo structure
 
-- `db/schema.sql` — SQL DDL for the relational schema
+- `db/schemaV1.sql` — SQL DDL for the relational schema used in our project
 - `docs/erd.md` — entity-relationship diagram and design notes
 - `docs/normalization.md` — functional dependency and BCNF reasoning
 - `AI_USAGE.md` — disclosure of generative AI use on this project
 
 ## Sprint status
 
-### Sprint 1 (this submission)
+### Sprint 0 (this submission)
 
 **Goals:**
 - Demonstrate conceptual + relational schema design (Data Architecture
@@ -26,14 +26,15 @@ Topic and design TBD by the team.
   database with SQL DDL
 
 **Status:** design in progress — see `docs/erd.md`, `docs/normalization.md`,
-and `db/schema.sql` (currently outlines/templates for the team to fill in).
+and `db/schemaV1.sql` (currently outlines/templates for the team to fill in).
 
-### Next sprint
+### Next Sprint (1)
 
-Planned scope: Advanced Relational Design.
+Planned scope/features for Sprint 1:
+- TBD
 
 ## Setup
 
 ```bash
-mysql -u root -p < db/schema.sql
+mysql -u root -p < db/schemaV1.sql
 ```
