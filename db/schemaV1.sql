@@ -6,36 +6,41 @@ CREATE TABLE USER (
     username varchar(128)
 );
 
-CREATE TABLE GENRES (
+CREATE TABLE GENRE (
 	genre_id int PRIMARY KEY,
     name varchar(128) 
 );
 
-CREATE TABLE SONG(
-    song_id int PRIMARY KEY,
-    name varchar(128), 
-    album_id int, 
-    length int, 
-    genre int
-);
-
-CREATE TABLE ALBUMS (
-	album_id int PRIMARY KEY, 
-	name varchar(128), 
-    album_by int,
-    release_date date,
-    is_single boolean 
-);
-
-CREATE TABLE ARTIST(
+CREATE TABLE ARTIST (
     artist_id int PRIMARY KEY,
     artist_name varchar(120)
 );
 
-CREATE TABLE RATING(
+CREATE TABLE ALBUM (
+	album_id int PRIMARY KEY, 
+	name varchar(128), 
+    made_by int,
+    release_date date,
+    is_single boolean,
+    FOREIGN KEY (made_by) REFERENCES ARTIST(artist_id)
+);
+
+CREATE TABLE SONG (
+    song_id int PRIMARY KEY,
+    name varchar(128), 
+    album_id int, 
+    length int, 
+    genre_id int,
+    FOREIGN KEY (album_id) REFERENCES ALBUM (album_id),
+    FOREIGN KEY (genre) REFERENCES GENRE (genre_id)
+);
+
+CREATE TABLE RATING (
     user_id int,
     song_id int,
     rating float,
-    PRIMARY KEY (user_id, song_id)
+    PRIMARY KEY (user_id, song_id),
+    FOREIGN KEY (user_id) REFERENCES USER (user_id),
+    FOREIGN KEY (song_id) REFERENCES SONG (song_id)
 );
 
