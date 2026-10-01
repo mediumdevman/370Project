@@ -23,12 +23,12 @@ of BCNF (Boyce-Codd Normal Form).
 **Schema:** GENRE(<u>genre_id</u>, name)
 
 **FDs:**
-- genre_id → name
-- name → genre_id
+- genre_id → genre_name
+- genre_name → genre_id
 
 **Closures:** 
-- {genre_id}<sup>+</sup> = {genre_id, name} → *genre_id* is a **superkey**.
-- {name}<sup>+</sup> = {name, genre_id} → *name* is a **superkey**.
+- {genre_id}<sup>+</sup> = {genre_id, genre_name} → *genre_id* is a **superkey**.
+- {genre_name}<sup>+</sup> = {genre_name, genre_id} → *name* is a **superkey**.
 
 **Results**: Both genre_id and name are both **minimal superkeys** and thus **GENRE** is in BCNF
 
@@ -37,10 +37,10 @@ of BCNF (Boyce-Codd Normal Form).
 **Schema:** SONG(<u>song_id</u>, name, album_id, length, genre_id)
 
 **FDs:**
-- song_id → name, album_id, length, genre_id
+- song_id → song_name, album_id, length, genre_id
 
 **Closures:** 
-- {song_id}<sup>+</sup> = {song_id, name, album_id, length, genre_id} → *song_id* is a **superkey**.
+- {song_id}<sup>+</sup> = {song_id, song_name, album_id, length, genre_id} → *song_id* is a **superkey**.
 
 **Notes**: album_id → genre_id is not a FD because a song may have a genre that is different from the genre of the album. Same with name → song_id or name → album_id, as it is possible for more than one song to have the same name or have the same name, but belong to different albums. This is why we are using ID's to uniquely catagorize them. 
 
@@ -48,23 +48,23 @@ of BCNF (Boyce-Codd Normal Form).
 
 ---
 
-**Schema:** ALBUM(<u>album_id</u>, name, made_by, release_date, is_single)
+**Schema:** ALBUM(<u>album_id</u>, album_name, made_by, release_date, is_single)
 
 **FDs:**
-- album_id → name, made_by, release_date, is_single
+- album_id → album_name, made_by, release_date, is_single
 
 **Closures:** 
-- {album_id}<sup>+</sup> = {album_id, name, made_by, release_date, is_single} → *album_id* is a **superkey**.
+- {album_id}<sup>+</sup> = {album_id, album_name, made_by, release_date, is_single} → *album_id* is a **superkey**.
 
 **Notes**: 
-- **name** → (*other attributes*) does not hold as more than one album can have the same name, hence unique album_ids. 
+- **album_name** → (*other attributes*) does not hold as more than one album can have the same name, hence unique album_ids. 
 
 - **made_by** (which is an artist_id) → (*other attributes*) does not hold as artists may have multiple albums. 
 
-- (**made_by**, **name**) → **album_id** does not hold. 
+- (**made_by**, **album_name**) → **album_id** does not hold. 
   - Ex:  **a1** = (0001, AlbumA, 0132, 2026-01-01, TRUE) could be as a single titled 'AlbumA', released ahead of an album. A month later **a2** = (0002, AlbumA, 0132, 2026-02-01, FALSE) is created. These are two sepearte releases and should be treated as such, even if they have the same name. 
  
-Thus **album_id** → *name, made_by, release_date, is_single* is the only non-trivial FD.
+Thus **album_id** → *album_name, made_by, release_date, is_single* is the only non-trivial FD.
 
 **Result:** Since album_id is a **superkey** and the only non-trivial FD in the table, **ALBUM** is in BCNF
 
