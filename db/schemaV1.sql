@@ -8,7 +8,7 @@ CREATE TABLE USER (
 
 CREATE TABLE GENRE (
 	genre_id int PRIMARY KEY,
-    name varchar(128) NOT NULL UNIQUE
+    genre_name varchar(128) NOT NULL UNIQUE
 );
 
 CREATE TABLE ARTIST (
@@ -18,7 +18,7 @@ CREATE TABLE ARTIST (
 
 CREATE TABLE ALBUM (
 	album_id int PRIMARY KEY,
-	name varchar(128) NOT NULL,
+	album_name varchar(128) NOT NULL,
     made_by int NOT NULL,
     release_date date,
     is_single boolean NOT NULL DEFAULT FALSE,
@@ -27,7 +27,7 @@ CREATE TABLE ALBUM (
 
 CREATE TABLE SONG (
     song_id int PRIMARY KEY,
-    name varchar(128) NOT NULL,
+    song_name varchar(128) NOT NULL,
     album_id int NOT NULL,
     length int NOT NULL,
     genre_id int,
