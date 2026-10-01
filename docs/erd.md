@@ -6,6 +6,11 @@
 
 Explain key decisions here — e.g.:
 
+- Genre-Song: One to Many relationship to account for each song having only one main genre, while each genre will have multiple songs under it
+- Song-Album: One to Many relationship represents each song belonging on only one album, while each album can have multiple songs (unless it is a sinlge)
+- Album-Artist: One to Many relationship represents each album being made my one primary artist, while each artist can create multiple albums.
+- User-Song: Many to Many relationship to represent that each user has the ability to leave multiple ratings on different songs while each song can have multiple ratings from different users.
+-
 - Why a relationship is one-to-many vs. many-to-many
 - Any surrogate keys used instead of natural keys, and why
 - Anything non-obvious about the model that isn't clear from the diagram
