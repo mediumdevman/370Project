@@ -1,6 +1,6 @@
 # ERD — [project name TBD]
 
-Draw the entity-relationship diagram 
+<img width="2640" height="1485" alt="image" src="https://github.com/user-attachments/assets/56f78484-f53b-4342-971e-1ae1d82157a6" />
 
 ## Design notes
 
