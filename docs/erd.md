@@ -2,7 +2,7 @@
 
 <img width="2640" height="1485" alt="image" src="https://github.com/user-attachments/assets/56f78484-f53b-4342-971e-1ae1d82157a6" />
 
-## Design notes
+## Entities
 
 - **User:** Stores information about each user, including a unique user_id and username. Users can rate songs through the Rates relationship.
 - **Song:** Represents individual songs and stores attributes such as song_id, song_name, and length. Each song is associated with a genre and an album.
@@ -11,6 +11,9 @@
 - **Genre:** Stores different music genres using a unique genre_id and genre_name. Each song is categorized under a genre.
 - **Ratings:** The Rates relationship connects users and songs, allowing users to rate individual songs. The Rating attribute stores the rating given by the user. This creates a many-to-many relationship, since a user can rate many songs and a song can receive ratings from many users.
 - **Primary Keys:** Each main entity has a unique identifier (user_id, song_id, album_id, artist_id, and genre_id) to uniquely identify its records.
+
+
+## Relationships 
 
 - **Genre-Song:** One to Many relationship to account for each song having only one main genre, while each genre will have multiple songs under it
 - **Song-Album:** One to Many relationship represents each song belonging on only one album, while each album can have multiple songs (unless it is a sinlge)
