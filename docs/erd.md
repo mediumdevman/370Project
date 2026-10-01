@@ -1,8 +1,8 @@
-# ERD — [project name TBD]
+# ERD
 
 <img width="2640" height="1485" alt="image" src="https://github.com/user-attachments/assets/56f78484-f53b-4342-971e-1ae1d82157a6" />
 
-## Entities
+## Entities and Attributes
 
 - **User:** Stores information about each user, including a unique user_id and username. Users can rate songs through the Rates relationship.
 - **Song:** Represents individual songs and stores attributes such as song_id, song_name, and length. Each song is associated with a genre and an album.
@@ -16,6 +16,6 @@
 ## Relationships 
 
 - **Genre-Song:** One to Many relationship to account for each song having only one main genre, while each genre will have multiple songs under it
-- **Song-Album:** One to Many relationship represents each song belonging on only one album, while each album can have multiple songs (unless it is a sinlge)
+- **Song-Album:** One to Many relationship represents each song belonging on only one album, while each album can have multiple songs (unless it is a single).
 - **Album-Artist:** One to Many relationship represents each album being made my one primary artist, while each artist can create multiple albums.
 - **User-Song:** Many to Many relationship to represent that each user has the ability to leave multiple ratings on different songs while each song can have multiple ratings from different users.
