@@ -1,11 +1,5 @@
 # Functional dependencies & BCNF argument
 
-For each table in `db/schemaV1.sql`, list its functional dependencies (FDs)
-and confirm every determinant is a candidate key — that's the definition
-of BCNF (Boyce-Codd Normal Form).
-
-### Delete b4 Submit
-**bold**, *italic*, `inline code` 
 
 ## Tables and BCNF Proofs
 
