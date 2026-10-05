@@ -33,8 +33,8 @@ How the stored things connect, and how many of each can be involved.
 
 - **R6.** Every album is released by **exactly one** artist. An artist can
   release **many** albums.
-- **R7.** Every song belongs to **exactly one** album. An album contains
-  **one or more** songs.
+- **R7.** Every song belongs to **exactly one** album. An album can contain
+  **many** songs.
 - **R8.** Every song has **at most one** genre. A genre can apply to **many**
   songs.
 - **R9.** A user can rate **many** songs, and a song can be rated by **many**
@@ -65,7 +65,7 @@ Where each requirement shows up in the design.
 | R2 | `ARTIST` entity | `ARTIST`, `artist_name` not `UNIQUE` | no `artist_name → artist_id` FD |
 | R3 | `ALBUM` entity | `ALBUM` | `album_id →` all attributes |
 | R4 | `SONG` entity | `SONG` | `song_id →` all attributes |
-| R5 | `GENRE` entity | `GENRE.name UNIQUE` | `name → genre_id` holds |
+| R5 | `GENRE` entity | `GENRE.genre_name UNIQUE` | `genre_name → genre_id` holds |
 | R6 | one-to-many ARTIST–ALBUM | FK `ALBUM.made_by → ARTIST` | |
 | R7 | one-to-many ALBUM–SONG | FK `SONG.album_id → ALBUM` | |
 | R8 | one-to-many GENRE–SONG | FK `SONG.genre_id → GENRE` | |
@@ -74,26 +74,18 @@ Where each requirement shows up in the design.
 | R11 | | `CHECK` on `RATING.rating` | |
 | R12 | | FKs on `RATING.user_id` and `RATING.song_id` | |
 | R13 | | FKs on `SONG` and `ALBUM` | |
-| R14 | | no `UNIQUE (made_by, name)` | `(made_by, name) → album_id` does not hold |
-| R15 | | `SONG.name` not `UNIQUE` | `name → song_id` does not hold |
+| R14 | | no `UNIQUE (made_by, album_name)` | `(made_by, album_name) → album_id` does not hold |
+| R15 | | `SONG.song_name` not `UNIQUE` | `song_name → song_id` does not hold |
 
-## Open decisions (resolve before submitting)
+## Known limitations
 
-These are choices the team still needs to make. Each one changes the schema,
-so update the requirement above once it's decided, then delete this section.
+Deliberate simplifications in the current design:
 
-- **Multiple genres per song (R8).** If a song can have several genres, R8
-  becomes many-to-many and `SONG.genre_id` has to be replaced by a `SONG_GENRE`
-  junction table.
-- **Multiple artists per album or song (R6).** Collaborations and features
-  currently can't be represented. Keeping one artist is fine if it's a
-  deliberate simplification, but it should be stated as one.
-- **Rating scale (R11).** Confirm 0.5–5.0 in half steps, or pick another
-  scale. The `CHECK` on `RATING.rating` currently enforces 0.5–5.0 in half
-  steps, so change it if the scale changes.
-- **Unique usernames (R1).** Most real apps require unique usernames. If you
-  change this, `normalization.md`'s USER section needs updating too.
-- **Letterboxd features.** Reviews, a listen diary (logging the same song more
-  than once), lists, or following other users are not covered yet. Adding
-  any of them means new requirements here, or they can go in the next-sprint
-  plan instead.
+- **One genre per song (R8).** A song can't belong to several genres. Supporting
+  that would replace `SONG.genre_id` with a `SONG_GENRE` junction table.
+- **One artist per album (R6).** Collaborations and features can't be
+  represented; each album has a single primary artist.
+- **Track order isn't stored.** A song knows its album but not its position on
+  it. A `TRACK` weak entity for this is planned for next sprint (see README).
+- **No social features yet.** Users can rate songs but can't follow each other.
+  A `FOLLOWS` relationship is planned for next sprint (see README).
