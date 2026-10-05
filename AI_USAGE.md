@@ -15,25 +15,30 @@ After the team wrote the schema (`db/schemaV1.sql`) and the BCNF proofs
 between those files and to fix what it found:
 
 - **Foreign key bug.** `SONG` declared `FOREIGN KEY (genre)` after the column
-  had been renamed to `genre_id`, so the script would fail. Fixed to
-  `genre_id`.
+had been renamed to `genre_id`, so the script would fail. Fixed to
+`genre_id`.
 - **Missing constraints.** The schema had no `NOT NULL`, `UNIQUE` or `CHECK`
-  constraints, even though our requirements and BCNF proofs assume them.
-  Added `NOT NULL` on required fields, `UNIQUE` on `GENRE.name` (needed for
-  the `name → genre_id` dependency), and a `CHECK` limiting ratings to
-  0.5–5.0 in half steps.
+constraints, even though our requirements and BCNF proofs assume them.
+Added `NOT NULL` on required fields, `UNIQUE` on `GENRE.name` (needed for
+the `name → genre_id` dependency), and a `CHECK` limiting ratings to
+0.5–5.0 in half steps.
 - **Name mismatches.** `normalization.md` still used old table and column
-  names (`GENRES`, `SONGS`, `ALBUMS`, `album_by`, `ARTISTS.name`). Updated them
-  to match the schema (`GENRE`, `SONG`, `ALBUM`, `made_by`,
-  `ARTIST.artist_name`).
+names (`GENRES`, `SONGS`, `ALBUMS`, `album_by`, `ARTISTS.name`). Updated them
+to match the schema (`GENRE`, `SONG`, `ALBUM`, `made_by`,
+`ARTIST.artist_name`).
+- Used to create test Data in seed.sql for the video Submission demonstrating the schema
+
+
 
 ### Other uses
 
 - Explaining database concepts (DDL vs. DML, how a `.sql` file runs against a
-  MySQL server, what an ERD is).
+MySQL server, what an ERD is).
 - Drafting `docs/requirements.md` from our existing schema and BCNF proofs.
-  The "Open decisions" section lists design choices the team still has to
-  make itself.
+The "Open decisions" section lists design choices the team still has to
+make itself.
+
+
 
 ### How this did not replace our own learning
 
@@ -44,4 +49,3 @@ pointed out where our files disagreed with each other, and we reviewed every
 change before committing it. Decisions about what the system should model
 (for example, whether a song can have more than one genre) are left to the
 team.
-
