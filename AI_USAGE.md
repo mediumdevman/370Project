@@ -27,6 +27,7 @@ names (`GENRES`, `SONGS`, `ALBUMS`, `album_by`, `ARTISTS.name`). Updated them
 to match the schema (`GENRE`, `SONG`, `ALBUM`, `made_by`,
 `ARTIST.artist_name`).
 - Used to create test Data in seed.sql for the video Submission demonstrating the schema
+- AI updated seed.sql to match the new TRACK design
 
 
 

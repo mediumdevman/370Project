@@ -1,6 +1,6 @@
 -- Dummy data for SONG_LOG, for demoing the schema.
--- Artists, albums and songs are real, but song lengths and release dates
--- are approximate. Users and ratings are made up.
+-- Artists, albums and songs are real, but song lengths, release dates
+-- and some track numbers are approximate. Users, ratings and follows are made up.
 --
 -- Run after the schema, on an empty database:
 --   mysql -u root -p < db/schemaV1.sql
@@ -44,25 +44,51 @@ INSERT INTO ALBUM (album_id, album_name, made_by, release_date, is_single) VALUE
     (7, 'Nevermind',                    6, '1991-09-24', FALSE),
     (8, 'The Story of Simon Simopath',  7, NULL,         FALSE);  -- R3: release date is optional
 
-INSERT INTO SONG (song_id, song_name, album_id, length, genre_id) VALUES
-    (1,  'Blank Space',               1, 231, 1),
-    (2,  'Style',                     1, 231, 1),
-    (3,  'Shake It Off',              1, 219, 1),
-    (4,  'After Hours',               2, 361, 4),
-    (5,  'Blinding Lights',           3, 200, 1),
-    (6,  'Save Your Tears',           3, 215, 1),
-    (7,  'After Hours',               3, 361, 4),   -- R15: same title as song 4
-    (8,  'HUMBLE.',                   4, 177, 3),
-    (9,  'DNA.',                      4, 185, 3),
-    (10, 'Creep',                     5, 238, 2),
-    (11, 'Creep',                     6, 268, 4),   -- R15: same title, different artist
-    (12, 'Smells Like Teen Spirit',   7, 301, 5),
-    (13, 'Come as You Are',           7, 219, 5),
-    (14, 'Pentecost Hotel',           8, 190, NULL);  -- R8: genre is optional
+-- Songs no longer store an album; which release(s) a song is on is in TRACK.
+-- Song 7 was a duplicate 'After Hours' row under the old design. It has been
+-- merged into song 4, which now appears on both the single and the album.
+INSERT INTO SONG (song_id, song_name, length, genre_id) VALUES
+    (1,  'Blank Space',               231, 1),
+    (2,  'Style',                     231, 1),
+    (3,  'Shake It Off',              219, 1),
+    (4,  'After Hours',               361, 4),
+    (5,  'Blinding Lights',           200, 1),
+    (6,  'Save Your Tears',           215, 1),
+    (8,  'HUMBLE.',                   177, 3),
+    (9,  'DNA.',                      185, 3),
+    (10, 'Creep',                     238, 2),
+    (11, 'Creep',                     268, 4),   -- R15: same title, different artist
+    (12, 'Smells Like Teen Spirit',   301, 5),
+    (13, 'Come as You Are',           219, 5),
+    (14, 'Pentecost Hotel',           190, NULL);  -- R8: genre is optional
+
+-- (album_id, track_number) is the weak-entity key; (album_id, song_id) is UNIQUE.
+INSERT INTO TRACK (album_id, track_number, song_id) VALUES
+    (1, 2,  1),    -- 1989
+    (1, 3,  2),
+    (1, 6,  3),
+    (2, 1,  4),    -- After Hours (single): one track
+    (3, 9,  5),    -- After Hours (album)
+    (3, 11, 6),
+    (3, 13, 4),    -- song 4 again: same song on a second release
+    (4, 2,  9),    -- DAMN.
+    (4, 8,  8),
+    (5, 2,  10),   -- Pablo Honey
+    (6, 2,  11),   -- CrazySexyCool
+    (7, 1,  12),   -- Nevermind
+    (7, 3,  13),
+    (8, 3,  14);   -- The Story of Simon Simopath
 
 INSERT INTO RATING (user_id, song_id, rating) VALUES
     (1, 1, 4.0), (1, 5, 5.0), (1, 8, 4.5), (1, 10, 3.5), (1, 12, 5.0),
     (2, 1, 5.0), (2, 2, 4.5), (2, 3, 3.0), (2, 5, 4.5), (2, 11, 4.0),
     (3, 8, 5.0), (3, 9, 4.5), (3, 10, 4.0), (3, 12, 4.5), (3, 13, 4.0),
-    (4, 5, 3.5), (4, 6, 4.0), (4, 7, 4.5), (4, 14, 2.5),
+    (4, 4, 4.5), (4, 5, 3.5), (4, 6, 4.0), (4, 14, 2.5),   -- (4, 4) was (4, 7) before the merge
     (5, 1, 2.0), (5, 5, 4.0), (5, 10, 5.0), (5, 13, 3.5);
+
+INSERT INTO FOLLOWS (follower_id, followed_id) VALUES
+    (1, 2), (1, 3),
+    (2, 1), (2, 3),
+    (3, 1),
+    (4, 5),
+    (5, 4), (5, 1);

@@ -28,11 +28,21 @@ CREATE TABLE ALBUM (
 CREATE TABLE SONG (
     song_id int PRIMARY KEY,
     song_name varchar(128) NOT NULL,
-    album_id int NOT NULL,
     length int NOT NULL,
     genre_id int,
-    FOREIGN KEY (album_id) REFERENCES ALBUM (album_id),
-    FOREIGN KEY (genre_id) REFERENCES GENRE (genre_id)
+    FOREIGN KEY (genre_id) REFERENCES GENRE (genre_id),
+    CHECK (length > 0)
+);
+
+CREATE TABLE TRACK(
+album_id INT, 
+track_number INT, 
+song_id INT NOT NULL, 
+PRIMARY KEY (album_id, track_number),
+UNIQUE (album_id, song_id), 
+FOREIGN KEY (album_id) REFERENCES ALBUM (album_id),
+FOREIGN KEY (song_id) REFERENCES SONG (song_id), 
+CHECK (track_number > 0) 
 );
 
 CREATE TABLE RATING (

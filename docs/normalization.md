@@ -28,15 +28,15 @@
 
 ---
 
-**Schema:** SONG(<u>song_id</u>, song_name, album_id, length, genre_id)
+**Schema:** SONG(<u>song_id</u>, song_name, length, genre_id)
 
 **FDs:**
-- song_id → song_name, album_id, length, genre_id
+- song_id → song_name, length, genre_id
 
 **Closures:** 
-- {song_id}<sup>+</sup> = {song_id, song_name, album_id, length, genre_id} → *song_id* is a **superkey**.
+- {song_id}<sup>+</sup> = {song_id, song_name, length, genre_id} → *song_id* is a **superkey**.
 
-**Notes**: album_id → genre_id is not a FD because a song may have a genre that is different from the genre of the album. Same with song_name → song_id or song_name → album_id, as it is possible for more than one song to have the same name or have the same name, but belong to different albums. This is why we are using ID's to uniquely categorize them. 
+**Notes**: Song_name → song_id, it is possible for more than one song to have the same name but belong to different albums. This is why we are using ID's to uniquely categorize them. 
 
 **Result:** Since song_id is a **superkey** and the only non-trivial FD in the table, **SONG** is in BCNF
 
@@ -91,6 +91,30 @@ Thus **album_id** → *album_name, made_by, release_date, is_single* is the only
 
 **Results**: Table is in BCNF
 
+---
+
+**Schema:** TRACK(<u>album_id, track_number</u>, song_id)
+
+**FDs:**
+- album_id, track_number → song_id
+- album_id, song_id → track_number
+
+**Closure:** 
+1. {album_id, track_number}<sup>+</sup> = {album_id, track_number, song_id} 
+2. {album_id, song_id}<sup>+</sup> = {album_id, track_number, song_id} 
+
+- *(album_id, track_number)* and *(album_id, song_id)* are **keys** as they are both minimal and determine all attributes of TRACK. {album_id}⁺, {track_number}⁺, and {song_id}⁺ each contain only themselves, so no single attribute is a superkey.
+
+**Notes:** 
+- **song_id → track_number** does not hold. A song can be released as a single at one point and then as a track on an album at another point. e.g. song 4 appears as (2, 1, 4) and (3, 13, 4), so the same song_id has track numbers 1 and 13.
+
+- **album_id → track_number or song_id** does not hold. One album has multiple tracks/songs, so a single album_id cannot yield an individual track/song from an album. e.g. album 3 has (3, 9, 5), (3, 11, 6), and (3, 13, 4), so one album_id has three different track numbers and three different songs.
+
+- **song_id → album_id** does not hold. Song 4 is on album 2 (track 1) and album 3 (track 13), so a song_id will point you two places which is why it can't FD a single album_id.
+
+- **track_number → (*any attribute*)** does not hold. Many albums have many songs therefore many albums have many track numbers. e.g. (2, 1, 4) and (7, 1, 12) are both track 1, but on different albums with different songs.
+
+**Results**: Both {album_id, track_number} and {album_id, song_id} are keys, so TRACK is in BCNF.
 
 
 ## Summary
@@ -101,7 +125,7 @@ The full schema is in BCNF because, for every relation, the determinant of each 
 
 - GENRE: Both genre_id → genre_name and genre_name → genre_id have superkey determinants.
 
-- SONG: song_id → song_name, album_id, length, genre_id and song_id is a superkey.
+- SONG: song_id → song_name, length, genre_id and song_id is a superkey.
 
 - ALBUM: album_id → album_name, made_by, release_date, is_single, and album_id is a superkey.
 
