@@ -116,6 +116,24 @@ Thus **album_id** → *album_name, made_by, release_date, is_single* is the only
 
 **Results**: Both {album_id, track_number} and {album_id, song_id} are keys, so TRACK is in BCNF.
 
+---
+
+**Schema:** FOLLOWS(<u>follower_id, followed_id</u>, followed_at)
+
+**FDs:**
+- follower_id, followed_id → followed_at
+
+**Closure:** {follower_id, followed_id}<sup>+</sup> = {follower_id, followed_id, followed_at} → *follower_id & followed_id* are a **superkey**.
+
+**Notes:**
+- **follower_id → followed_at** does not hold, since a user can follow multiple users at different times.
+- **followed_id → followed_at** does not hold, since a user can be followed by multiple users at different times.
+- **followed_at → (follower_id, followed_id)** does not hold, since multiple follow relationships can be recorded at the same timestamp.
+- Neither **follower_id → followed_id** nor **followed_id → follower_id** holds, since a user can follow multiple users and can also be followed by multiple users.
+
+**Results:** Since (follower_id, followed_id) is a superkey and the only non-trivial FD in the table, FOLLOWS is in BCNF.
+
+---
 
 ## Summary
 
@@ -133,4 +151,7 @@ The full schema is in BCNF because, for every relation, the determinant of each 
 
 - RATING: (user_id, song_id) → rating, and (user_id, song_id) is a superkey.
 
-Therefore, no table needs to be decomposed or split to achieve BCNF. The schema as presented is already in BCNF.
+- FOLLOWS: (follower_id, followed_id) -> followed_at and (follower_id, followed_id) is a superkey
+
+Therefore, no table needs to be decomposed or split to achieve BCNF. The schema as presented is already in BCNF. 
+Since every relation in BCNF is also in 3NF, all tables in the schema are also in 3NF.
