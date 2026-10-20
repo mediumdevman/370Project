@@ -45,3 +45,12 @@ CREATE TABLE RATING (
     CHECK (rating BETWEEN 0.5 AND 5.0 AND rating * 2 = FLOOR(rating * 2))
 );
 
+CREATE TABLE FOLLOWS (
+    follower_id int NOT NULL,
+    followed_id int NOT NULL,
+    followed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (follower_id, followed_id),
+    FOREIGN KEY (follower_id) REFERENCES USER(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (followed_id) REFERENCES USER(user_id) ON DELETE CASCADE,
+    CHECK (follower_id <> followed_id)
+);
