@@ -3,17 +3,20 @@ USE SONG_LOG;
 
 CREATE TABLE USER (
     user_id int PRIMARY KEY,
-    username varchar(128) NOT NULL
+    username varchar(128) NOT NULL,
+    CONSTRAINT chk_username_not_blank CHECK (CHAR_LENGTH(TRIM(username)) > 0)
 );
 
 CREATE TABLE GENRE (
 	genre_id int PRIMARY KEY,
-    genre_name varchar(128) NOT NULL UNIQUE
+    genre_name varchar(128) NOT NULL UNIQUE,
+    CONSTRAINT chk_genre_name_not_blank CHECK (CHAR_LENGTH(TRIM(genre_name)) > 0)
 );
 
 CREATE TABLE ARTIST (
     artist_id int PRIMARY KEY,
-    artist_name varchar(120) NOT NULL
+    artist_name varchar(120) NOT NULL,
+    CONSTRAINT chk_artist_name_not_blank CHECK (CHAR_LENGTH(TRIM(artist_name)) > 0)
 );
 
 CREATE TABLE ALBUM (
@@ -22,7 +25,8 @@ CREATE TABLE ALBUM (
     made_by int NOT NULL,
     release_date date,
     is_single boolean NOT NULL DEFAULT FALSE,
-    FOREIGN KEY (made_by) REFERENCES ARTIST(artist_id)
+    FOREIGN KEY (made_by) REFERENCES ARTIST(artist_id) ON DELETE RESTRICT,
+    CONSTRAINT chk_album_name_not_blank CHECK (CHAR_LENGTH(TRIM(album_name)) > 0)
 );
 
 CREATE TABLE SONG (
@@ -30,8 +34,9 @@ CREATE TABLE SONG (
     song_name varchar(128) NOT NULL,
     length int NOT NULL,
     genre_id int,
-    FOREIGN KEY (genre_id) REFERENCES GENRE (genre_id),
-    CHECK (length > 0)
+    FOREIGN KEY (genre_id) REFERENCES GENRE (genre_id) ON DELETE SET NULL,
+    CONSTRAINT chk_song_name_not_blank CHECK (CHAR_LENGTH(TRIM(song_name)) > 0),
+    CONSTRAINT chk_song_length_positive CHECK (length > 0)
 );
 
 CREATE TABLE TRACK(
@@ -40,9 +45,9 @@ track_number INT,
 song_id INT NOT NULL, 
 PRIMARY KEY (album_id, track_number),
 UNIQUE (album_id, song_id), 
-FOREIGN KEY (album_id) REFERENCES ALBUM (album_id),
-FOREIGN KEY (song_id) REFERENCES SONG (song_id), 
-CHECK (track_number > 0) 
+FOREIGN KEY (album_id) REFERENCES ALBUM (album_id) ON DELETE CASCADE,
+FOREIGN KEY (song_id) REFERENCES SONG (song_id) ON DELETE RESTRICT,
+CONSTRAINT chk_track_number_positive CHECK (track_number > 0)
 );
 
 CREATE TABLE RATING (
@@ -50,9 +55,9 @@ CREATE TABLE RATING (
     song_id int,
     rating float NOT NULL,
     PRIMARY KEY (user_id, song_id),
-    FOREIGN KEY (user_id) REFERENCES USER (user_id),
-    FOREIGN KEY (song_id) REFERENCES SONG (song_id),
-    CHECK (rating BETWEEN 0.5 AND 5.0 AND rating * 2 = FLOOR(rating * 2))
+    FOREIGN KEY (user_id) REFERENCES USER (user_id) ON DELETE CASCADE,
+    FOREIGN KEY (song_id) REFERENCES SONG (song_id) ON DELETE CASCADE,
+    CONSTRAINT chk_rating_half_steps CHECK (rating BETWEEN 0.5 AND 5.0 AND rating * 2 = FLOOR(rating * 2))
 );
 
 CREATE TABLE FOLLOWS (
@@ -62,5 +67,5 @@ CREATE TABLE FOLLOWS (
     PRIMARY KEY (follower_id, followed_id),
     FOREIGN KEY (follower_id) REFERENCES USER(user_id) ON DELETE CASCADE,
     FOREIGN KEY (followed_id) REFERENCES USER(user_id) ON DELETE CASCADE,
-    CHECK (follower_id <> followed_id)
+    CONSTRAINT chk_no_self_follow CHECK (follower_id <> followed_id)
 );
