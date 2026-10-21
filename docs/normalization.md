@@ -151,6 +151,8 @@ The full schema is in BCNF because, for every relation, the determinant of each 
 
 - RATING: (user_id, song_id) → rating, and (user_id, song_id) is a superkey.
 
+- TRACK: (album_id, track_number) → song_id and (album_id, song_id) → track_number. Both (album_id, track_number) and (album_id, song_id) are keys (and therefore superkeys).
+
 - FOLLOWS: (follower_id, followed_id) -> followed_at and (follower_id, followed_id) is a superkey
 
 Therefore, no table needs to be decomposed or split to achieve BCNF. The schema as presented is already in BCNF. 

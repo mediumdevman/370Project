@@ -40,14 +40,14 @@ CREATE TABLE SONG (
 );
 
 CREATE TABLE TRACK(
-album_id INT, 
-track_number INT, 
-song_id INT NOT NULL, 
-PRIMARY KEY (album_id, track_number),
-UNIQUE (album_id, song_id), 
-FOREIGN KEY (album_id) REFERENCES ALBUM (album_id) ON DELETE CASCADE,
-FOREIGN KEY (song_id) REFERENCES SONG (song_id) ON DELETE RESTRICT,
-CONSTRAINT chk_track_number_positive CHECK (track_number > 0)
+	album_id INT,
+	track_number INT,
+	song_id INT NOT NULL,
+	PRIMARY KEY (album_id, track_number),
+	UNIQUE (album_id, song_id),
+	FOREIGN KEY (album_id) REFERENCES ALBUM (album_id) ON DELETE CASCADE,
+	FOREIGN KEY (song_id) REFERENCES SONG (song_id) ON DELETE RESTRICT,
+	CONSTRAINT chk_track_number_positive CHECK (track_number > 0)
 );
 
 CREATE TABLE RATING (
