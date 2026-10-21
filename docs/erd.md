@@ -11,7 +11,7 @@
 - **Artist:** Stores information about artists using a unique artist_id and artist_name. An artist can be associated with multiple albums.
 - **Genre:** Stores different music genres using a unique genre_id and genre_name. Each song is categorized under a genre.
 - **Ratings:** The Rates relationship connects users and songs, allowing users to rate individual songs. The Rating attribute stores the rating given by the user. This creates a many-to-many relationship, since a user can rate many songs and a song can receive ratings from many users.
-- **Primary Keys:** Each main entity has a unique identifier (user_id, song_id, album_id, artist_id, and genre_id) to uniquely identify its records. Track, a weak enitiy set, had no ID and thus uses (album_id, track_number), combining an albums key with a its partial key.
+- **Primary Keys:** Each main entity has a unique identifier (user_id, song_id, album_id, artist_id, and genre_id) to uniquely identify its records. Track, a weak entity set, has no ID of its own and uses (album_id, track_number), combining its album's key with its partial key.
 
 
 ## Relationships 
