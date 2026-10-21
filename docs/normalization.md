@@ -36,7 +36,7 @@
 **Closures:** 
 - {song_id}<sup>+</sup> = {song_id, song_name, length, genre_id} → *song_id* is a **superkey**.
 
-**Notes**: Song_name → song_id, it is possible for more than one song to have the same name but belong to different albums. This is why we are using ID's to uniquely categorize them. 
+**Notes**: song_name → song_id does not hold, since more than one song can have the same name (e.g. two different songs called Creep). This is why we are using ID's to uniquely categorize them. 
 
 **Result:** Since song_id is a **superkey** and the only non-trivial FD in the table, **SONG** is in BCNF
 
