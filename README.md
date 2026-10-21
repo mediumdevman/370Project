@@ -72,18 +72,22 @@ database with SQL DDL
 
 ### Sprint 2 (next)
 
-**Current limitation:** SONG_LOG can store and protect data, but it can't answer a single question a user would ask. After Sprint 1 there are 8 tables, constraints and tests, and zero queries. Genres are also flat, so there is no way to say that one genre is a sub-genre of another.
+**Current limitation:** SONG_LOG can store and protect data, but it can't answer a single question a user would ask. After Sprint 1 there are 8 tables, constraints and tests, and zero queries. A rule from Sprint 1 also can't be enforced with a CHECK (release date not in the future). Genres are flat, so there is no way to say one genre is a sub-genre of another.
 
-| # | Goal | Lecture | How we measure it |
+**Plan:** one setup goal, plus one goal for each module competency in Complex SQL Queries and Advanced SQL. Queries go in `db/queries.sql` with the expected output in a comment, and trigger tests go in `db/tests.sql`.
+
+| # | Competency | Goal | How we measure it |
 | --- | --- | --- | --- |
-| S1 | **Sub-genres.** Add a "subgenre of" relationship from GENRE to itself, with parent and child roles (e.g. Alternative Rock is a subgenre of Rock). Update the ERD, DDL and seed data. | 05 Multiplicity (roles, self-referencing relationship), 04 Conceptual Design | Seed has at least 3 sub-genres. Inserting a genre as its own parent fails, and inserting a parent that doesn't exist fails. |
-| S2 | **FDs and normal forms for the new design.** FDs and a BCNF proof for the updated GENRE, plus a minimal basis and a 3NF check (prime attributes) for every table. | 06 FDs & Keys, 07 BCNF, 12 Projecting FDs, 23 3NF | `normalization.md` has a section per table with its minimal basis. GENRE, which has two keys, is shown to be in BCNF and 3NF. |
-| S3 | **4NF check.** Show in writing why putting genres and artists for a song in one table, SONG_INFO(song, genre, artist), would have MVDs (song ↠ genre, song ↠ artist) and break 4NF, and why our separate tables don't. | 24 4NF & MVDs | A worked example in `normalization.md` using seed songs, showing the repeated rows and the 4NF decomposition |
-| S4 | **Basic queries.** A `db/queries.sql` that answers 4 user questions with SELECT, WHERE and ORDER BY, e.g. "songs longer than 5 minutes, longest first". Each query also written in relational algebra (σ, π, ρ). | 03 SQL DQL, 08 Relational Algebra | Every query runs, and its output matches the expected rows written in a comment above it |
-| S5 | **Join queries.** Use joins to answer: "every track with its song, album and artist", "every sub-genre with its parent genre" (a self-join with renaming), and "ratings by the people user 1 follows". | 03 SQL DQL (×, ⋈, theta join, ρ) | Track listing returns all 14 tracks; the feed for user 1 shows only ratings by users 2 and 3; the sub-genre query matches the seed |
-| S6 | **Set queries.** Use union, intersection and difference, e.g. "songs rated by both user 1 and user 2" and "users who rated a Taylor Swift song but not a Radiohead song". | 03 SQL DQL (∪, ∩, −) | Each result matches the answer worked out by hand in relational algebra |
+| S1 | Setup (conceptual design, roles) | **Sub-genres.** Add a `parent_genre_id` column to GENRE that points to another genre (e.g. Alternative Rock under Rock). Add 3 sub-genres to the seed and update the ERD. | Seed loads with 3 sub-genres; a sub-genre with a parent that doesn't exist is rejected |
+| S2 | **Uses aggregation:** Creates an aggregation query with FD attributes and both WHERE and HAVING | Average rating per album: GROUP BY album_id and also show album_name (album_id → album_name), WHERE not a single, HAVING at least 3 ratings | Returns 5 albums: DAMN. 4.67, After Hours 4.25, Nevermind 4.25, Pablo Honey 4.17, 1989 3.70 |
+| S3 | **Uses sub-queries:** Creates a sub-query to aggregate aggregations with existential condition | Average of the album averages, counting only albums where EXISTS a 5.0 rating | Returns 4.21 over 5 albums |
+| S4 | **Uses SQL DML:** Inserts and deletes data based on complex query predicates | INSERT ... SELECT: user 5 follows every user they don't already follow. DELETE: remove ratings of songs that have no genre. | FOLLOWS goes from 8 to 10 rows, RATING from 23 to 22 |
+| S5 | **Accelerates queries with indexes:** Accelerates a query or a uniqueness check with EXPLAIN and a non-primary index | Index on SONG(song_name) for searching by title | EXPLAIN goes from type ALL (13 rows) to type ref |
+| S6 | **Simplifies queries:** Simplifies a complex query by converting a sub-query into a (outer?) join | "Songs nobody has rated" with NOT IN, then rewritten as a LEFT JOIN ... IS NULL (add 1 unrated song to the seed) | Both return the same song |
+| S7 | **Uses triggers:** Enforces consistency by adding triggers to queries | One trigger that stops an album's release date being in the future (a CHECK couldn't do this in Sprint 1) | Inserting a future date fails, today's date works |
+| S8 | **Embraces ternary logic:** Incorporate NULL's into queries with ternary predicate logic | Show how the NULL genre on song 14 changes results | `genre_id <> 1` returns 7 songs, adding `OR genre_id IS NULL` returns 8; COUNT(*) 13 vs COUNT(genre_id) 12 |
 
-**Velocity:** we met all 8 Sprint 1 goals, so 6 goals is a reasonable size for Sprint 2.
+**Velocity:** we met all 8 Sprint 1 goals, and these 8 are smaller: most are a single query, so this is a realistic size.
 
 
 
