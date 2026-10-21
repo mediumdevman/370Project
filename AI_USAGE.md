@@ -50,3 +50,19 @@ pointed out where our files disagreed with each other, and we reviewed every
 change before committing it. Decisions about what the system should model
 (for example, whether a song can have more than one genre) are left to the
 team.
+## Sprint 1
+
+**Tool:** Claude (Anthropic)
+
+### What we used it for
+
+- Reviewing our schema and writing the named CHECK constraints and ON DELETE rules. The team picked the rules (what cascades and what is blocked).
+- Writing `db/tests.sql` to test each constraint and delete rule. We ran it ourselves and checked every result.
+- Drafting `docs/design_quality.md`, `docs/requirements.md` updates and README fixes from our existing design.
+- Drafting the Sprint 2 plan from the Brightspace competencies. The team chose the goals, including sub-genres.
+- Explaining MySQL and git errors.
+- Updating `seed.sql` to match the new TRACK design.
+
+### How this did not replace our own learning
+
+The design decisions this sprint were made by the team: adding TRACK as a weak entity, removing album_id from SONG, designing FOLLOWS with roles, and choosing the ON DELETE rules. We reviewed every AI change before committing it and can explain each constraint and test.
