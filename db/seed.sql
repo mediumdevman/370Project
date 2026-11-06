@@ -17,13 +17,16 @@ INSERT INTO USER (user_id, username) VALUES
     (4, 'alex'),
     (5, 'alex');          -- R1: two users can share a username
 
-INSERT INTO GENRE (genre_id, genre_name) VALUES
-    (1, 'Pop'),
-    (2, 'Rock'),
-    (3, 'Hip-Hop'),
-    (4, 'R&B'),
-    (5, 'Grunge'),
-    (6, 'Psychedelic Rock');
+INSERT INTO GENRE (genre_id, genre_name, parent_genre_id) VALUES
+    (1, 'Pop', NULL),
+    (2, 'Rock', NULL),
+    (3, 'Hip-Hop', NULL),
+    (4, 'R&B', NULL),
+    (5, 'Grunge', NULL),
+    (6, 'Psychedelic Rock', NULL),
+    (7, 'Hyperpop', 1),
+    (8, 'Soft Rock', 2),
+    (9, 'Punk Rock', 2);
 
 INSERT INTO ARTIST (artist_id, artist_name) VALUES
     (1, 'Taylor Swift'),

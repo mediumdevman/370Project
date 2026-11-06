@@ -10,7 +10,10 @@ CREATE TABLE USER (
 CREATE TABLE GENRE (
 	genre_id int PRIMARY KEY,
     genre_name varchar(128) NOT NULL UNIQUE,
-    CONSTRAINT chk_genre_name_not_blank CHECK (CHAR_LENGTH(TRIM(genre_name)) > 0)
+    parent_genre_id int, 
+    FOREIGN KEY (parent_genre_id) REFERENCES GENRE(genre_id) ON DELETE RESTRICT, 
+    CONSTRAINT chk_genre_name_not_blank CHECK (CHAR_LENGTH(TRIM(genre_name)) > 0),
+    CONSTRAINT chk_genre_different_parent CHECK (parent_genre_id != genre_id) 
 );
 
 CREATE TABLE ARTIST (
