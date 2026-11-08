@@ -28,6 +28,32 @@ FROM (
     GROUP BY a.album_id
 ) AS album_avgs;
 
+-- S6 songs nobody has rated, sub-query version
+-- expect: Anyone Can Play Guitar
+SELECT song_name
+FROM SONG
+WHERE song_id NOT IN (SELECT song_id FROM RATING);
+
+-- S6 same query as a left join
+-- expect: Anyone Can Play Guitar
+SELECT s.song_name
+FROM SONG s
+LEFT JOIN RATING r ON r.song_id = s.song_id
+WHERE r.song_id IS NULL;
+
+-- S8 the null genre song is not counted either way
+-- expect 8
+SELECT COUNT(*) FROM SONG WHERE genre_id <> 1;
+
+-- expect 9
+SELECT COUNT(*) FROM SONG WHERE genre_id <> 1 OR genre_id IS NULL;
+
+-- expect 14, 13
+SELECT COUNT(*), COUNT(genre_id) FROM SONG;
+
+-- expect NULL
+SELECT 2 NOT IN (1, NULL);
+
 -- make user 5 follow other users
 INSERT INTO FOLLOWS (follower_id, followed_id)
 SELECT 5, u.user_id

@@ -72,3 +72,22 @@ CREATE TABLE FOLLOWS (
     FOREIGN KEY (followed_id) REFERENCES USER(user_id) ON DELETE CASCADE,
     CONSTRAINT chk_no_self_follow CHECK (follower_id <> followed_id)
 );
+
+-- S7 release date cant be in the future (CURDATE not allowed in a CHECK)
+DELIMITER //
+CREATE TRIGGER trg_album_date_insert BEFORE INSERT ON ALBUM
+FOR EACH ROW
+BEGIN
+    IF NEW.release_date > CURDATE() THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'release_date cannot be in the future';
+    END IF;
+END//
+
+CREATE TRIGGER trg_album_date_update BEFORE UPDATE ON ALBUM
+FOR EACH ROW
+BEGIN
+    IF NEW.release_date > CURDATE() THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'release_date cannot be in the future';
+    END IF;
+END//
+DELIMITER ;

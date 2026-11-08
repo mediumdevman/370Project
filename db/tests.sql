@@ -82,4 +82,10 @@ DELETE FROM GENRE WHERE genre_id = 2;
 DELETE FROM GENRE WHERE genre_id = 3;
 SELECT song_id, genre_id FROM SONG WHERE song_id = 8;
 
+-- S7 trigger: future date fails, today and null work, update to future fails
+INSERT INTO ALBUM (album_id, album_name, made_by, release_date) VALUES (100, 'Future', 1, '2030-01-01');
+INSERT INTO ALBUM (album_id, album_name, made_by, release_date) VALUES (101, 'Today', 1, CURDATE());
+INSERT INTO ALBUM (album_id, album_name, made_by, release_date) VALUES (102, 'No date', 1, NULL);
+UPDATE ALBUM SET release_date = '2030-01-01' WHERE album_id = 1;
+
 ROLLBACK;
