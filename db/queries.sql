@@ -43,3 +43,8 @@ DELETE FROM RATING
 WHERE song_id IN (
     SELECT song_id FROM SONG WHERE genre_id IS NULL
 );
+
+-- show parent and child pairings 
+SELECT sub.genre_name AS sub_genre, parent.genre_name AS parent_genre
+FROM GENRE sub
+JOIN GENRE parent ON parent.genre_id = sub.parent_genre_id

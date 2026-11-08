@@ -14,17 +14,21 @@
 
 ---
 
-**Schema:** GENRE(<u>genre_id</u>, genre_name)
+**Schema:** GENRE(<u>genre_id</u>, genre_name, parent_genre_id)
 
 **FDs:**
-- genre_id → genre_name
-- genre_name → genre_id
+- genre_id → genre_name, parent_genre_id
+- genre_name → genre_id, parent_genre_id
 
 **Closures:** 
-- {genre_id}<sup>+</sup> = {genre_id, genre_name} → *genre_id* is a **superkey**.
-- {genre_name}<sup>+</sup> = {genre_name, genre_id} → *genre_name* is a **superkey**.
+- {genre_id}<sup>+</sup> = {genre_id, genre_name, parent_genre_id} → *genre_id* is a **superkey**.
+- {genre_name}<sup>+</sup> = {genre_name, genre_id, parent_genre_id} → *genre_name* is a **superkey**.
 
-**Results**: Both genre_id and genre_name are both **minimal superkeys** and thus **GENRE** is in BCNF
+**Notes**:
+parent_genre_id → genre_id or parent_genre_id → genre_name do not hold as a parent_genre_id can be shared by more than 1 
+genre. Soft Rock (8) and Punk Rock (9) both have parent 2, therefore parent_genre_id = 2 is paired with two different genres, Soft Rock and Punk Rock. 
+
+**Results**: every FD’s left side is a key, so GENRE is still in BCNF
 
 ---
 
@@ -141,7 +145,7 @@ The full schema is in BCNF because, for every relation, the determinant of each 
 
 - USER: user_id → username, and user_id is a superkey.
 
-- GENRE: Both genre_id → genre_name and genre_name → genre_id have superkey determinants.
+- GENRE: Both genre_id → genre_name, parent_genre_id and genre_name → genre_id, parent_genre_id are keys.
 
 - SONG: song_id → song_name, length, genre_id and song_id is a superkey.
 

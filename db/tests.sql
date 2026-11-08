@@ -43,6 +43,14 @@ INSERT INTO RATING (user_id, song_id, rating) VALUES (1, 3, 5.0);
 INSERT INTO FOLLOWS (follower_id, followed_id) VALUES (1, 1);
 INSERT INTO FOLLOWS (follower_id, followed_id) VALUES (1, 2);
 
+-- sub-genre test
+-- adding a genre with a parent that does not exists (FK Error, 1452) 
+INSERT INTO GENRE (genre_id, genre_name, parent_genre_id) VALUES (101, 'Yacht Rock', 999); 
+-- adding a genre whose parent is itself (Check Error -> 3819) 
+INSERT INTO GENRE (genre_id, genre_name, parent_genre_id) VALUES (102, 'Glitch Pop', 102);
+-- adding a valid sub genre that doesn't reference itself and references another genre as its parent
+INSERT INTO GENRE (genre_id, genre_name, parent_genre_id) VALUES (103, 'Yacht Rock', 2);   
+
 -- on delete test
 -- deleting user 4 works and removes their ratings and follows (cascade)
 SELECT COUNT(*) FROM RATING WHERE user_id = 4;
@@ -65,8 +73,13 @@ SELECT COUNT(*) FROM TRACK WHERE album_id = 8;
 -- deleting an artist who still has albums fails (restrict)
 DELETE FROM ARTIST WHERE artist_id = 1;
 
+-- deleting a genre that has sub-genres pointing to it (restrict, error 1451)
+DELETE FROM GENRE WHERE genre_id = 2; 
+
 -- deleting a genre keeps its songs but sets their genre to null (set null)
-DELETE FROM GENRE WHERE genre_id = 2;
-SELECT song_id, genre_id FROM SONG WHERE song_id = 10;
+-- hip-hop has no sub genres pointing to it, so the songs can continue 
+-- to exist with genre set to NULL
+DELETE FROM GENRE WHERE genre_id = 3;
+SELECT song_id, genre_id FROM SONG WHERE song_id = 8;
 
 ROLLBACK;
