@@ -43,6 +43,18 @@ INSERT INTO RATING (user_id, song_id, rating) VALUES (1, 3, 5.0);
 INSERT INTO FOLLOWS (follower_id, followed_id) VALUES (1, 1);
 INSERT INTO FOLLOWS (follower_id, followed_id) VALUES (1, 2);
 
+-- song_artist test
+-- role is an ENUM, so only 'primary' and 'featured' are allowed
+-- (1,2,'featured') works; the next three fail:
+-- duplicate pair (1062), bad role (1265 in strict mode), artist that doesn't exist (1452)
+INSERT INTO SONG_ARTIST (song_id, artist_id, role) VALUES (1, 2, 'featured');
+INSERT INTO SONG_ARTIST (song_id, artist_id, role) VALUES (1, 2, 'primary');
+INSERT INTO SONG_ARTIST (song_id, artist_id, role) VALUES (1, 3, 'guest');
+INSERT INTO SONG_ARTIST (song_id, artist_id, role) VALUES (1, 999, 'featured');
+-- leaving role out uses the default, so this works and the SELECT should show 'primary'
+INSERT INTO SONG_ARTIST (song_id, artist_id) VALUES (2, 2);
+SELECT role FROM SONG_ARTIST WHERE song_id = 2 AND artist_id = 2;
+
 -- sub-genre test
 -- adding a genre with a parent that does not exists (FK Error, 1452) 
 INSERT INTO GENRE (genre_id, genre_name, parent_genre_id) VALUES (101, 'Yacht Rock', 999); 
@@ -66,6 +78,13 @@ DELETE FROM SONG WHERE song_id = 104;
 SELECT COUNT(*) FROM RATING WHERE song_id = 104;
 DELETE FROM SONG WHERE song_id = 1;
 
+-- deleting a song removes its artist credits (cascade)
+INSERT INTO SONG (song_id, song_name, length) VALUES (105, 'Demo', 120);
+INSERT INTO SONG_ARTIST (song_id, artist_id) VALUES (105, 1);
+DELETE FROM SONG WHERE song_id = 105;
+SELECT COUNT(*) FROM SONG_ARTIST WHERE song_id = 105;   -- expect 0
+ 
+
 -- deleting an album removes its tracks (cascade since a track is a weak entity)
 DELETE FROM ALBUM WHERE album_id = 8;
 SELECT COUNT(*) FROM TRACK WHERE album_id = 8;
@@ -73,6 +92,12 @@ SELECT COUNT(*) FROM TRACK WHERE album_id = 8;
 -- deleting an artist who still has albums fails (restrict)
 DELETE FROM ARTIST WHERE artist_id = 1;
 
+-- deleting an artist who is credited on a song fails (restrict)
+-- this artist has no albums, so the only thing blocking the delete is the credit
+INSERT INTO ARTIST (artist_id, artist_name) VALUES (101, 'Session Player');
+INSERT INTO SONG_ARTIST (song_id, artist_id, role) VALUES (3, 101, 'featured');
+DELETE FROM ARTIST WHERE artist_id = 101;                -- fails, error 1451
+ 
 -- deleting a genre that has sub-genres pointing to it (restrict, error 1451)
 DELETE FROM GENRE WHERE genre_id = 2; 
 
