@@ -70,7 +70,20 @@ WHERE song_id IN (
     SELECT song_id FROM SONG WHERE genre_id IS NULL
 );
 
--- show parent and child pairings 
+-- S1 sub-genres: each sub-genre with its parent (self-join on GENRE)
+-- expect: Hyperpop | Pop, Soft Rock | Rock, Punk Rock | Rock
 SELECT sub.genre_name AS sub_genre, parent.genre_name AS parent_genre
 FROM GENRE sub
-JOIN GENRE parent ON parent.genre_id = sub.parent_genre_id
+JOIN GENRE parent ON parent.genre_id = sub.parent_genre_id; 
+
+-- S5 index on song_name to speed up searching by title
+-- before index: type ALL, key NULL, 14 rows 
+EXPLAIN FORMAT=TRADITIONAL SELECT * FROM SONG WHERE song_name = 'Creep';
+
+-- After creating index: type ref, key index_song_name, 2 rows return
+CREATE INDEX index_song_name ON SONG(song_name);
+EXPLAIN FORMAT=TRADITIONAL SELECT * FROM SONG WHERE song_name = 'Creep';
+
+DROP INDEX index_song_name ON SONG;
+
+
