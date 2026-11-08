@@ -82,10 +82,10 @@ database with SQL DDL
 | S2 | **Uses aggregation:** Creates an aggregation query with FD attributes and both WHERE and HAVING | Average rating per album: GROUP BY album_id and also show album_name (album_id → album_name), WHERE not a single, HAVING at least 3 ratings | Returns 5 albums: DAMN. 4.67, After Hours 4.25, Nevermind 4.25, Pablo Honey 4.17, 1989 3.70 |
 | S3 | **Uses sub-queries:** Creates a sub-query to aggregate aggregations with existential condition | Average of the album averages, counting only albums where EXISTS a 5.0 rating | Returns 4.21 over 5 albums |
 | S4 | **Uses SQL DML:** Inserts and deletes data based on complex query predicates | INSERT ... SELECT: user 5 follows every user they don't already follow. DELETE: remove ratings of songs that have no genre. | FOLLOWS goes from 8 to 10 rows, RATING from 23 to 22 |
-| S5 | **Accelerates queries with indexes:** Accelerates a query or a uniqueness check with EXPLAIN and a non-primary index | Index on SONG(song_name) for searching by title | EXPLAIN goes from type ALL (13 rows) to type ref |
+| S5 | **Accelerates queries with indexes:** Accelerates a query or a uniqueness check with EXPLAIN and a non-primary index | Index on SONG(song_name) for searching by title | EXPLAIN goes from type ALL (14 rows) to type ref |
 | S6 | **Simplifies queries:** Simplifies a complex query by converting a sub-query into a (outer?) join | "Songs nobody has rated" with NOT IN, then rewritten as a LEFT JOIN ... IS NULL (add 1 unrated song to the seed) | Both return the same song |
 | S7 | **Uses triggers:** Enforces consistency by adding triggers to queries | One trigger that stops an album's release date being in the future (a CHECK couldn't do this in Sprint 1) | Inserting a future date fails, today's date works |
-| S8 | **Embraces ternary logic:** Incorporate NULL's into queries with ternary predicate logic | Show how the NULL genre on song 14 changes results | `genre_id <> 1` returns 7 songs, adding `OR genre_id IS NULL` returns 8; COUNT(*) 13 vs COUNT(genre_id) 12 |
+| S8 | **Embraces ternary logic:** Incorporate NULL's into queries with ternary predicate logic | Show how the NULL genre on song 14 changes results | `genre_id <> 1` returns 8 songs, adding `OR genre_id IS NULL` returns 9; COUNT(*) 14 vs COUNT(genre_id) 13 |
 
 **Velocity:** we met all 8 Sprint 1 goals, and these 8 are smaller: most are a single query, so this is a realistic size.
 
