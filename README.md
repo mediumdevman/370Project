@@ -21,7 +21,6 @@ This is a file to document the development of our CSC370 Database Project. It co
 - `AI_USAGE.md` — disclosure of generative AI use on this project
 
 
-
 ## Sprint status
 
 
@@ -99,8 +98,8 @@ database with SQL DDL
 - Strong CHECK constraints, and Follows has role names with followed_at on the relationship
 - Suggestion: if a song appears on a compilation album released by a different artist, who is that song's artist in our design, and is that what our system should say?
 
-**Response to the TA suggestion:** in our design a song has no artist of its own. Its artist comes from the album it is on (SONG → TRACK → ALBUM.made_by). On a compilation by a different artist, the song would show the compilation's artist, and a song on both its original album and a compilation would have two artists. Fixing this would need a song-level artist (for example a `performed_by` column on SONG, separate from the album's `made_by`). We decided not to add it in Sprint 3 so we can focus on the remaining module competencies, and we have listed it as a known limitation and future work.
-
+**Response to the TA suggestion:** in our Sprint 1 design a song had no artist of its own. Its artist came from the album it was on (SONG → TRACK → ALBUM.made_by), so a song on a compilation by a different artist would show the compilation's artist, and a song on both its original album and a compilation would have had two artists. That is not what the system should say, so we fixed it. We added a `SONG_ARTIST` table (the Performed by relationship) that links each song to its own artist(s), with a `role` of primary or featured. `ALBUM.made_by` stays and now means the album artist, the credit for the release as a whole, so a compilation's album artist can differ from each song's artist. Features and collaborations on a song are now possible. An album still has only one album artist, and the schema can't require every song to have at least one artist (the song has to exist before its credit), so that is listed as a known limitation in `docs/requirements.md`.
+ 
 **Status:**
 
 - S1 met: `parent_genre_id` on GENRE with RESTRICT and a CHECK against self-parenting, 3 sub-genres in the seed, missing parent (1452) and self-parent (3819) rejected in `db/tests.sql`, ERD updated (`docs/ERDv3.jpg`)
@@ -111,6 +110,8 @@ database with SQL DDL
 - S6 met: NOT IN and LEFT JOIN ... IS NULL both return Anyone Can Play Guitar
 - S7 met: triggers on insert and update of ALBUM.release_date, tested in `db/tests.sql`
 - S8 met: 8 vs 9 songs, COUNT(*) 14 vs COUNT(genre_id) 13
+- TA suggestion addressed: `SONG_ARTIST(song_id, artist_id, role)` with primary key (song_id, artist_id), a song's credits deleted with the song (CASCADE) and an artist who is still credited can't be deleted (RESTRICT). Every song is seeded with its artist, and the constraints and delete rules are tested in `db/tests.sql`. Added R23 to `docs/requirements.md`, the BCNF proof in `docs/normalization.md`, and findings 6-8 in `docs/design_quality.md`
+- 9 tables total
 
 ### Sprint 3 (next)
 
