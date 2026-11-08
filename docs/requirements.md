@@ -111,6 +111,12 @@ Deliberate simplifications in the current design:
   that would replace `SONG.genre_id` with a `SONG_GENRE` junction table.
 - **One artist per album (R6).** Collaborations and features can't be
   represented; each album has a single primary artist.
+- **A song has no artist of its own.** A song's artist comes from the album
+  it is on (SONG → TRACK → ALBUM.made_by). If a song appears on a compilation
+  released by a different artist, it shows the compilation's artist, and a song
+  on both its original album and a compilation has two artists. Fixing this
+  would need a song-level artist, such as a `performed_by` column on SONG
+  separate from the album's `made_by` (raised in TA feedback after Sprint 1).
 - **Release dates can be in the future.** MySQL doesn't allow `CURDATE()` in a
   `CHECK`, so this would need a trigger.
 - **A single isn't limited to one track.** `is_single` doesn't stop an album
