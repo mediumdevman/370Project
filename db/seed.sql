@@ -60,7 +60,8 @@ INSERT INTO SONG (song_id, song_name, length, genre_id) VALUES
     (11, 'Creep',                     268, 4),   -- R15: same title, different artist
     (12, 'Smells Like Teen Spirit',   301, 5),
     (13, 'Come as You Are',           219, 5),
-    (14, 'Pentecost Hotel',           190, NULL);  -- R8: genre is optional
+    (14, 'Pentecost Hotel',           190, NULL),  -- R8: genre is optional
+    (15, 'Anyone Can Play Guitar',    218, 2);     -- nobody rates this one (S6)
 
 -- (album_id, track_number) is the weak-entity key; (album_id, song_id) is UNIQUE.
 INSERT INTO TRACK (album_id, track_number, song_id) VALUES
@@ -77,7 +78,8 @@ INSERT INTO TRACK (album_id, track_number, song_id) VALUES
     (6, 2,  11),   -- CrazySexyCool
     (7, 1,  12),   -- Nevermind
     (7, 3,  13),
-    (8, 3,  14);   -- The Story of Simon Simopath
+    (8, 3,  14),   -- The Story of Simon Simopath
+    (5, 6,  15);   -- Pablo Honey
 
 INSERT INTO RATING (user_id, song_id, rating) VALUES
     (1, 1, 4.0), (1, 5, 5.0), (1, 8, 4.5), (1, 10, 3.5), (1, 12, 5.0),
