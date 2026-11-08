@@ -31,8 +31,10 @@ What the system stores.
 
 How the stored things connect, and how many of each can be involved.
 
-- **R6.** Every album is released by **exactly one** artist. An artist can
-  release **many** albums.
+- **R6.** Every album has **exactly one** album artist, the artist credited
+  for the release as a whole. For a compilation this is a placeholder artist
+  such as "Various Artists". An artist can be the album artist of **many**
+  albums.
 - **R7.** A song can appear on **many** albums (e.g. a single and later the
   full album), and an album can contain **many** songs. Each appearance is a
   **track** with a track number, so the same song is stored once.
@@ -45,6 +47,11 @@ How the stored things connect, and how many of each can be involved.
   identified by its album and track number.
 - **R17.** A user can follow **many** users and be followed by **many**
   users. The system records when each follow happened.
+- **R23.** A song is credited to **one or more** artists, and an artist can be
+  credited on **many** songs. Each credit is either **primary** or
+  **featured** (primary by default), and an artist can be credited on a given
+  song **at most once**. A song's artist is separate from its album's artist,
+  so a song on a compilation is still credited to its own artist.
 
 ## Business rules
 
@@ -54,8 +61,9 @@ Constraints on the values themselves.
   replaces the old one; it does not add a second rating.
 - **R11.** A rating is a number from **0.5 to 5.0** in half-star steps.
 - **R12.** A rating cannot exist for a user or a song that does not exist.
-- **R13.** A track cannot reference an album or song that does not exist, and
-  an album cannot reference an artist that does not exist.
+- **R13.** A track cannot reference an album or song that does not exist, an
+  album cannot reference an artist that does not exist, and an artist credit
+  cannot reference a song or artist that does not exist.
 - **R14.** Two albums by the same artist may have the same title (e.g. a
   single released ahead of a full album with the same name). They are
   separate releases.
@@ -68,10 +76,11 @@ Constraints on the values themselves.
 - **R21.** A song's length must be greater than 0 seconds.
 - **R22.** Deleting data follows these rules:
   - deleting a user deletes their ratings and follows
-  - deleting a song deletes its ratings, but a song still on an album can't be
-    deleted
+  - deleting a song deletes its ratings and its artist credits, but a song
+    still on an album can't be deleted
   - deleting an album deletes its tracks
-  - an artist who still has albums can't be deleted
+  - an artist who still has albums or is still credited on a song can't be
+    deleted
   - deleting a genre keeps its songs but clears their genre
 
 ## Traceability
@@ -85,14 +94,14 @@ Where each requirement shows up in the design.
 | R3 | `ALBUM` entity | `ALBUM` | `album_id →` all attributes |
 | R4 | `SONG` entity | `SONG` | `song_id →` all attributes |
 | R5 | `GENRE` entity | `GENRE.genre_name UNIQUE` | `genre_name → genre_id` holds |
-| R6 | one-to-many ARTIST–ALBUM | FK `ALBUM.made_by → ARTIST` | |
+| R6 | one-to-many ARTIST–ALBUM (`Made by`, the album artist) | FK `ALBUM.made_by → ARTIST` | |
 | R7 | many-to-many SONG–ALBUM through `TRACK` | `TRACK(album_id, track_number, song_id)` | `song_id → album_id` does not hold |
 | R8 | one-to-many GENRE–SONG | FK `SONG.genre_id → GENRE` | |
 | R9 | many-to-many USER–SONG | `RATING` table | |
 | R10 | | `PRIMARY KEY (user_id, song_id)` on `RATING` | `(user_id, song_id) → rating` |
 | R11 | | `CHECK` on `RATING.rating` | |
 | R12 | | FKs on `RATING.user_id` and `RATING.song_id` | |
-| R13 | | FKs on `TRACK` and `ALBUM` | |
+| R13 | | FKs on `TRACK`, `ALBUM` and `SONG_ARTIST` | |
 | R14 | | no `UNIQUE (made_by, album_name)` | `(made_by, album_name) → album_id` does not hold |
 | R15 | | `SONG.song_name` not `UNIQUE` | `song_name → song_id` does not hold |
 | R16 | `TRACK` weak entity, `Contains` (double diamond) to `ALBUM`, `Represents` to `SONG` | `PRIMARY KEY (album_id, track_number)`, FKs to `ALBUM` and `SONG` | `(album_id, track_number) → song_id` |
@@ -102,6 +111,7 @@ Where each requirement shows up in the design.
 | R20 | | `chk_*_not_blank` on each name column | |
 | R21 | | `chk_song_length_positive` | |
 | R22 | | `ON DELETE` rules on every FK | |
+| R23 | many-to-many SONG–ARTIST (`Performed by`) with a `role` attribute | `SONG_ARTIST(song_id, artist_id, role)`, `PRIMARY KEY (song_id, artist_id)`, `role ENUM('primary', 'featured') DEFAULT 'primary'` | `(song_id, artist_id) → role`; no `song_id → role` or `artist_id → role` |
 
 ## Known limitations
 
@@ -109,14 +119,19 @@ Deliberate simplifications in the current design:
 
 - **One genre per song (R8).** A song can't belong to several genres. Supporting
   that would replace `SONG.genre_id` with a `SONG_GENRE` junction table.
-- **One artist per album (R6).** Collaborations and features can't be
-  represented; each album has a single primary artist.
-- **A song has no artist of its own.** A song's artist comes from the album
-  it is on (SONG → TRACK → ALBUM.made_by). If a song appears on a compilation
-  released by a different artist, it shows the compilation's artist, and a song
-  on both its original album and a compilation has two artists. Fixing this
-  would need a song-level artist, such as a `performed_by` column on SONG
-  separate from the album's `made_by` (raised in TA feedback after Sprint 1).
+- **One artist per album (R6).** An album has a single album artist. Songs on
+  it can have several artists (R23), but the album itself can't list more than
+  one. A compilation uses a placeholder artist such as "Various Artists".
+- **A song isn't required to have an artist (R23).** The schema allows a song
+  with no `SONG_ARTIST` row, because the song has to exist before its credit
+  can be added, so a plain constraint can't require one. The application has to
+  add the credit when it adds the song.
+- **No credit order (R23).** Credits only say primary or featured. If a song
+  has two featured artists, the schema doesn't say which is shown first. An
+  `artist_order` column would fix this.
+- **Album artist and song artist aren't checked against each other.** On a
+  normal album they are usually the same artist, but the schema doesn't enforce
+  it, since on a compilation they differ on purpose.
 - **Release dates can be in the future.** MySQL doesn't allow `CURDATE()` in a
   `CHECK`, so this would need a trigger.
 - **A single isn't limited to one track.** `is_single` doesn't stop an album

@@ -66,3 +66,22 @@ team.
 ### How this did not replace our own learning
 
 The design decisions this sprint were made by the team: adding TRACK as a weak entity, removing album_id from SONG, designing FOLLOWS with roles, and choosing the ON DELETE rules. We reviewed every AI change before committing it and can explain each constraint and test.
+
+## Sprint 2
+
+**Tool:** Claude (Anthropic)
+
+### What we used it for
+
+- Explaining SQL concepts and helping troubleshoot MySQL errors, particularly with aggregation, subqueries, `INSERT ... SELECT`, `DELETE`, indexes, triggers, and NULL handling.
+- Reviewing our implementation of the sub-genre functionality, including the self-referencing `parent_genre_id` foreign key, `ON DELETE RESTRICT` rule, and CHECK constraint preventing a genre from being its own parent.
+- Reviewing the queries for each Sprint 2 competency, including album rating averages, existential subqueries, conditional inserts and deletes, query optimization, and NULL handling.
+- Helping test triggers that prevent albums from having future release dates, including triggers for both INSERT and UPDATE operations.
+- Reviewing our proposed response to TA feedback about song artists and compilation albums. We used AI to check our implementation of the `SONG_ARTIST` relationship, allowing songs to have their own primary and featured artists independently of the album artist.
+- Helping update supporting documentation, including the ERD, BCNF proofs, requirements, design quality report, and test cases to reflect the Sprint 2 changes.
+
+### How this did not replace our own learning
+
+The team made the design decisions and determined how each competency would be demonstrated. In particular, the decision to introduce `SONG_ARTIST` came from our own evaluation of the TA's feedback and our existing database design. The team chose the relationship structure, primary and featured artist roles, and the associated foreign key and deletion rules.
+
+AI was used to explain SQL concepts, check our implementation, review queries and constraints, and troubleshoot errors. We reviewed the suggested changes, ran the SQL scripts and tests ourselves, and checked the results against our expected outputs. The team remains responsible for understanding the queries, database design, and implementation decisions demonstrated in this submission.

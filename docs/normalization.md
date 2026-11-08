@@ -79,6 +79,24 @@ Thus **album_id** → *album_name, made_by, release_date, is_single* is the only
 
 ---
 
+**Schema:** SONG_ARTIST(<u>song_id, artist_id</u>, role)
+ 
+**FDs:**
+- song_id, artist_id → role
+
+**Closure:** {song_id, artist_id}<sup>+</sup> = {song_id, artist_id, role} → *song_id & artist_id* are a **superkey**.
+ 
+**Notes:**
+- **song_id → role** does not hold. A song can have more than one credited artist with different roles. e.g. in tests.sql song 1 is credited to artist 1 as primary and to artist 2 as featured, so song_id 1 has two different roles.
+- **artist_id → role** does not hold. One artist can be primary on one song and featured on another. e.g. in tests.sql artist 2 is featured on song 1 (1, 2, featured) and primary on song 2 (2, 2, primary).
+- **song_id → artist_id** and **artist_id → song_id** do not hold. A song can have several artists and an artist can be credited on several songs, which is why this is a many to many relationship and why both ids are needed in the key.
+- **role → (*any attribute*)** does not hold. Many songs and many artists share the same role value, so role cannot determine which song or which artist it belongs to.
+- role is the only non-key attribute, and it depends on the whole key. It describes how that artist is involved in that song, so it can't be determined by either id alone.
+
+**Results**: Since (song_id, artist_id) is a superkey and the only non-trivial FD in the table, SONG_ARTIST is in BCNF.
+ 
+---
+
 **Schema:** RATING(<u>user_id, song_id</u>, rating)
 
 **FDs:**
@@ -152,6 +170,8 @@ The full schema is in BCNF because, for every relation, the determinant of each 
 - ALBUM: album_id → album_name, made_by, release_date, is_single, and album_id is a superkey.
 
 - ARTIST: artist_id → artist_name, and artist_id is a superkey.
+
+- SONG_ARTIST: (song_id, artist_id) → role, and (song_id, artist_id) is a superkey.
 
 - RATING: (user_id, song_id) → rating, and (user_id, song_id) is a superkey.
 

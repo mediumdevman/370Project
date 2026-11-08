@@ -66,6 +66,15 @@ INSERT INTO SONG (song_id, song_name, length, genre_id) VALUES
     (14, 'Pentecost Hotel',           190, NULL),  -- R8: genre is optional
     (15, 'Anyone Can Play Guitar',    218, 2);     -- nobody rates this one (S6)
 
+INSERT INTO SONG_ARTIST (song_id, artist_id, role) VALUES
+    (1,  1, 'primary'), (2,  1, 'primary'), (3,  1, 'primary'),   -- Taylor Swift
+    (4,  2, 'primary'), (5,  2, 'primary'), (6,  2, 'primary'),   -- The Weeknd
+    (8,  3, 'primary'), (9,  3, 'primary'),                       -- Kendrick Lamar
+    (10, 4, 'primary'), (15, 4, 'primary'),                       -- Radiohead
+    (11, 5, 'primary'),                                           -- TLC
+    (12, 6, 'primary'), (13, 6, 'primary'),                       -- Nirvana (US)
+    (14, 7, 'primary'); 
+
 -- (album_id, track_number) is the weak-entity key; (album_id, song_id) is UNIQUE.
 INSERT INTO TRACK (album_id, track_number, song_id) VALUES
     (1, 2,  1),    -- 1989

@@ -42,6 +42,15 @@ CREATE TABLE SONG (
     CONSTRAINT chk_song_length_positive CHECK (length > 0)
 );
 
+CREATE TABLE SONG_ARTIST (
+    song_id int NOT NULL,
+    artist_id int NOT NULL,
+    role ENUM('primary', 'featured') NOT NULL DEFAULT 'primary',
+    PRIMARY KEY (song_id, artist_id),
+    FOREIGN KEY (song_id) REFERENCES SONG (song_id) ON DELETE CASCADE,
+    FOREIGN KEY (artist_id) REFERENCES ARTIST (artist_id) ON DELETE RESTRICT
+);
+
 CREATE TABLE TRACK(
 	album_id INT,
 	track_number INT,

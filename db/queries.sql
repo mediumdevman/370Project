@@ -1,15 +1,19 @@
 USE SONG_LOG;
 
--- average rating per album
+-- S2 average rating per album, not singles, at least 3 ratings
+-- expect: DAMN. 4.67 | After Hours 4.25 | Nevermind 4.25 | Pablo Honey 4.17 | 1989 3.70
 SELECT a.album_name,
        ROUND(AVG(r.rating), 2) AS avg_rating
 FROM ALBUM a
 JOIN TRACK t  ON t.album_id = a.album_id
 JOIN RATING r ON r.song_id  = t.song_id
+WHERE a.is_single = FALSE
 GROUP BY a.album_id, a.album_name
+HAVING COUNT(r.rating) >= 3
 ORDER BY avg_rating DESC, a.album_name;
 
--- average of the album averages, only for albums that have at least one 5.0 rating
+-- S3 average of the album averages, only for albums that have at least one 5.0 rating
+-- expect: 4.21 | 5
 SELECT ROUND(AVG(album_avg), 2) AS avg_of_album_avgs,
        COUNT(*)                 AS album_count
 FROM (
@@ -54,7 +58,8 @@ SELECT COUNT(*), COUNT(genre_id) FROM SONG;
 -- expect NULL
 SELECT 2 NOT IN (1, NULL);
 
--- make user 5 follow other users
+-- S4 make user 5 follow other users
+-- expect: FOLLOWS goes from 8 to 10 rows (user 5 already follows 4 and 1, so 2 and 3 are added)
 INSERT INTO FOLLOWS (follower_id, followed_id)
 SELECT 5, u.user_id
 FROM USER u
@@ -64,7 +69,8 @@ WHERE u.user_id <> 5
       WHERE f.follower_id = 5 AND f.followed_id = u.user_id
   );
 
--- DELETE ratings of songs that have no genre
+-- S4 DELETE ratings of songs that have no genre
+-- expect: RATING goes from 23 to 22 rows (song 14 has the only one)
 DELETE FROM RATING
 WHERE song_id IN (
     SELECT song_id FROM SONG WHERE genre_id IS NULL
